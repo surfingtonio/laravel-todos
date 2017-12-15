@@ -29,17 +29,17 @@
                 @foreach($todos as $todo)
                     <li class="list-group-item">
                         @if($todo->completed)
-                            <button href="{{ route('todos.restore', [ 'id' => $todo->id ]) }}" class="btn btn-info">
+                            <a href="{{ route('todos.restore', [ 'id' => $todo->id ]) }}" class="btn btn-info">
                                 <i class="fa fa-undo"></i>
-                            </button>
+                            </a>
                         @else
-                            <button href="{{ route('todos.complete', [ 'id' => $todo->id ]) }}" class="btn btn-success">
+                            <a href="{{ route('todos.complete', [ 'id' => $todo->id ]) }}" class="btn btn-success">
                                 <i class="fa fa-check"></i>
-                            </button>
+                            </a>
                         @endif
-                        <button href="{{ route('todos.delete', [ 'id' => $todo->id ]) }}" class="btn btn-danger ml-1">
+                        <a href="{{ route('todos.delete', [ 'id' => $todo->id ]) }}" class="btn btn-danger ml-1">
                             <i class="fa fa-close"></i>
-                        </button>
+                        </a>
                         <span class="pl-4 {{ $todo->completed ? 'completed' : ''}}">{{ $todo->todo }}</span>
                     </li>
                 @endforeach
