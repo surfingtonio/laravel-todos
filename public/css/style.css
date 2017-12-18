@@ -1,4 +1,21 @@
-.completed {
-    color: #888;
+body {
+    background: #eee;
+    padding-top: 70px;
+}
+.todo.completed {
+    border-color: #eee;
     text-decoration: line-through;
+    opacity:.6;
+}
+.todo .form-check {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+}
+.todo .close {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
 }

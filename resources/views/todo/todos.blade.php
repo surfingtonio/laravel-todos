@@ -2,7 +2,7 @@
 
 @section('content')
     @if(Session::has('success'))
-    <div class="row">
+    <div class="row mb-2">
         <div class="col">
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ Session::get('success') }}
@@ -13,37 +13,32 @@
         </div>
     </div>
     @endif
-    <div class="row">
+    <div class="row mb-2">
         <div class="col">
-            <form action="/todos/create" method="post">
-                {{ csrf_field() }}
-                <div class="form-group">
-                    <input type="text" name="todo" class="form-control form-control-lg" placeholder="Type a new todo and hit 'Enter'">
-                </div>
+            <form action="/todos">
+                <input type="text" class="form-control form-control-lg" placeholder="Enter todo item">
             </form>
         </div>
     </div>
     <div class="row">
-        <div class="col">
-            <ul class="list-group">
+        @if($todos->count() < 1)
+            <div class="col">
+                <p class="text-center text-muted">There are no todo items</p>
+            </div>
+        @else
+            <div class="col">
                 @foreach($todos as $todo)
-                    <li class="list-group-item">
-                        @if($todo->completed)
-                            <a href="{{ route('todos.restore', [ 'id' => $todo->id ]) }}" class="btn btn-info">
-                                <i class="fa fa-undo"></i>
-                            </a>
-                        @else
-                            <a href="{{ route('todos.complete', [ 'id' => $todo->id ]) }}" class="btn btn-success">
-                                <i class="fa fa-check"></i>
-                            </a>
-                        @endif
-                        <a href="{{ route('todos.delete', [ 'id' => $todo->id ]) }}" class="btn btn-danger ml-1">
-                            <i class="fa fa-close"></i>
-                        </a>
-                        <span class="pl-4 {{ $todo->completed ? 'completed' : ''}}">{{ $todo->todo }}</span>
-                    </li>
+                    <div class="todo card mb-2 {{ $todo->completed ? 'completed' : '' }}">
+                        <div class="card-body pl-5 pr-5">
+                            <input type="checkbox" class="form-check form-check-inline" {{ $todo->completed ? 'checked' : '' }} value="{{ $todo->id }}">
+                            <span>{{ $todo->todo }}</span>
+                            <button type="button" class="close" data-todo="{{ $todo->id }}" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
                 @endforeach
-            </ul>
-        </div>
+            </div>
+        @endif
     </div>
 @stop
