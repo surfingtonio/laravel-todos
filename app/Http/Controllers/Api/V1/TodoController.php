@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
+use App\Todo;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\TodoResource;
+use App\Http\Resources\TodosResource;
 
 class TodoController extends Controller
 {
@@ -13,18 +17,12 @@ class TodoController extends Controller
      */
     public function index()
     {
-        return view('todo.todos');
+	    $todos = Todo::all();
+
+	    TodosResource::withoutWrapping();
+	    return new TodosResource($todos);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -34,7 +32,13 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+	    $todo = new Todo;
+	    $todo->todo = $request->todo;
+	    $todo->completed = 0;
+	    $todo->save();
+
+      TodoResource::withoutWrapping();
+      return new TodoResource($todo);
     }
 
     /**
@@ -45,19 +49,12 @@ class TodoController extends Controller
      */
     public function show($id)
     {
-        //
+    	$todo = Todo::findOrFail($id);
+
+	    TodoResource::withoutWrapping();
+	    return new TodoResource($todo);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -66,9 +63,15 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+	public function update(Request $request, $id)
     {
-        //
+	    $todo = Todo::firstOrNew([ 'id' => $id ]);
+	    $todo->todo = $request->todo;
+	    $todo->completed = $request->completed;
+	    $todo->save();
+
+      TodoResource::withoutWrapping();
+      return new TodoResource($todo);
     }
 
     /**
@@ -79,6 +82,9 @@ class TodoController extends Controller
      */
     public function destroy($id)
     {
-        //
+	    $todo = Todo::findOrFail($id);
+	    $todo->delete();
+
+	    return 204;
     }
 }
