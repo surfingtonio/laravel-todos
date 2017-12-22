@@ -42946,7 +42946,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             var _this4 = this;
 
             this.todos.unshift(data);
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/todos/', data).then(function (res) {
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/todos', data).then(function (res) {
                 _this4.todos[0].id = res.data.id;
             }).catch(function (error) {
                 _this4.todos.splice(0, 1);

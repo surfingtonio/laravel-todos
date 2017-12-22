@@ -61,7 +61,7 @@
 
             handleSubmit (data) {
                 this.todos.unshift(data);
-                Axios.post('/api/todos/', data)
+                Axios.post('/api/todos', data)
                     .then(res => {
                         this.todos[0].id = res.data.id
                     })
