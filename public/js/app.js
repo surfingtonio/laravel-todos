@@ -42876,8 +42876,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_todo_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_todo_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_todos_vue__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_todos_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_todos_vue__);
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 //
 //
 //
@@ -42917,11 +42915,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             var i = this.todos.findIndex(function (obj) {
                 return obj.id === id;
             });
-            var c = this.todos[i].completed;
+            var todo = this.todos[i];
 
-            this.todos[i].completed = c === 1 ? 0 : 1;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.put('/api/todos/' + id, _extends({}, this.todos[i], { completed: c === 1 ? 0 : 1 })).catch(function (error) {
-                _this2.todos[i].completed = c;
+            this.$set(todo, 'loading', true);
+            this.$set(todo, 'completed', todo.completed === 1 ? 0 : 1);
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.put('/api/todos/' + id, this.todos[i]).then(function (res) {
+                _this2.$set(todo, 'loading', false);
+            }).catch(function (error) {
+                _this2.$set(todo, 'completed', todo.completed === 1 ? 0 : 1);
+                _this2.$set(todo, 'loading', false);
                 console.log('There was an error updating id: ' + id);
             });
         },
@@ -42933,11 +42935,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                 var i = this.todos.findIndex(function (obj) {
                     return obj.id === id;
                 });
-                var c = this.todos[i];
+                var todo = this.todos[i];
 
-                this.todos.splice(i, 1);
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/todos/' + id).catch(function (error) {
-                    _this3.todos.splice(i, 0, c);
+                this.$set(todo, 'loading', true);
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/todos/' + id).then(function (res) {
+                    _this3.todos.splice(_this3.todos.indexOf(todo), 1);
+                }).catch(function (error) {
+                    _this3.$set(todo, 'loading', false);
                     console.log('There was an error deleting id: ' + id);
                 });
             }
@@ -42946,10 +42950,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             var _this4 = this;
 
             this.todos.unshift(data);
+            var todo = this.todos[0];
+
+            this.$set(todo, 'loading', true);
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/todos', data).then(function (res) {
-                _this4.todos[0].id = res.data.id;
+                _this4.$set(todo, 'id', res.data.id);
+                _this4.$set(todo, 'loading', false);
             }).catch(function (error) {
-                _this4.todos.splice(0, 1);
+                _this4.todos.splice(_this4.todos.indexOf(todo), 1);
+                _this4.$set(todo, 'loading', false);
                 console.log('There was an error inserting new todo');
             });
         }
@@ -43183,6 +43192,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -43218,44 +43230,51 @@ var render = function() {
             "div",
             {
               staticClass: "todo card mb-2",
-              class: { completed: todo.completed === 1 }
+              class: { completed: todo.completed === 1, loading: todo.loading }
             },
             [
               _c("div", { staticClass: "card-body pl-5 pr-5" }, [
-                _c("input", {
-                  staticClass: "form-check form-check-inline",
-                  attrs: { type: "checkbox" },
-                  domProps: { checked: todo.completed === 1, value: todo.id },
-                  on: {
-                    click: function($event) {
-                      _vm.$emit("onUpdate", todo.id)
-                    }
-                  }
-                }),
+                todo.id
+                  ? _c("input", {
+                      staticClass: "form-check form-check-inline",
+                      attrs: { type: "checkbox" },
+                      domProps: {
+                        checked: todo.completed === 1,
+                        value: todo.id
+                      },
+                      on: {
+                        click: function($event) {
+                          _vm.$emit("onUpdate", todo.id)
+                        }
+                      }
+                    })
+                  : _vm._e(),
                 _vm._v(" "),
                 _c("span", [_vm._v(_vm._s(todo.todo))]),
                 _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "close",
-                    attrs: {
-                      type: "button",
-                      "data-dismiss": "alert",
-                      "aria-label": "Close"
-                    },
-                    on: {
-                      click: function($event) {
-                        _vm.$emit("onDelete", todo.id)
-                      }
-                    }
-                  },
-                  [
-                    _c("span", { attrs: { "aria-hidden": "true" } }, [
-                      _vm._v("×")
-                    ])
-                  ]
-                )
+                todo.id && !todo.loading
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "close",
+                        attrs: {
+                          type: "button",
+                          "data-dismiss": "alert",
+                          "aria-label": "Close"
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.$emit("onDelete", todo.id)
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { attrs: { "aria-hidden": "true" } }, [
+                          _vm._v("×")
+                        ])
+                      ]
+                    )
+                  : _vm._e()
               ])
             ]
           )

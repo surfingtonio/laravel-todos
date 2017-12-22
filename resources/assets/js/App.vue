@@ -22,7 +22,7 @@
         mounted () {
             Axios.get('/api/todos')
                 .then(res => {
-                    this.todos = res.data.reverse();
+                    this.todos = res.data.reverse()
                 })
         },
 
@@ -34,12 +34,17 @@
 
             handleUpdate (id) {
                 let i = this.todos.findIndex(obj => obj.id === id)
-                let c = this.todos[i].completed
+                let todo = this.todos[i]
 
-                this.todos[i].completed = c === 1 ? 0 : 1
-                Axios.put('/api/todos/' + id, { ...this.todos[i], completed: c === 1 ? 0 : 1 })
+                this.$set(todo, 'loading', true)
+                this.$set(todo, 'completed', todo.completed === 1 ? 0 : 1)
+                Axios.put('/api/todos/' + id, this.todos[i])
+                    .then(res => {
+                        this.$set(todo, 'loading', false)
+                    })
                     .catch(error => {
-                        this.todos[i].completed = c
+                        this.$set(todo, 'completed', todo.completed === 1 ? 0 : 1)
+                        this.$set(todo, 'loading', false)
                         console.log('There was an error updating id: ' + id);
                     })
             },
@@ -48,25 +53,33 @@
                 let res = confirm('Are you sure you want to permanently delete?')
                 if(res) {
                     let i = this.todos.findIndex(obj => obj.id === id)
-                    let c = this.todos[i]
+                    let todo = this.todos[i]
 
-                    this.todos.splice(i, 1)
+                    this.$set(todo, 'loading', true)
                     Axios.delete('/api/todos/' + id)
+                        .then(res => {
+                            this.todos.splice(this.todos.indexOf(todo), 1)
+                        })
                         .catch(error => {
-                          this.todos.splice(i, 0, c)
-                          console.log('There was an error deleting id: ' + id);
+                            this.$set(todo, 'loading', false)
+                            console.log('There was an error deleting id: ' + id);
                         })
                 }
             },
 
             handleSubmit (data) {
                 this.todos.unshift(data);
+                let todo = this.todos[0]
+
+                this.$set(todo, 'loading', true)
                 Axios.post('/api/todos', data)
                     .then(res => {
-                        this.todos[0].id = res.data.id
+                        this.$set(todo, 'id', res.data.id)
+                        this.$set(todo, 'loading', false)
                     })
                     .catch(error => {
-                        this.todos.splice(0, 1)
+                        this.todos.splice(this.todos.indexOf(todo), 1)
+                        this.$set(todo, 'loading', false)
                         console.log('There was an error inserting new todo')
                     })
             }

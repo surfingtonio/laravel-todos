@@ -6,7 +6,7 @@
 .todo.completed {
   border-color: #eee;
   text-decoration: line-through;
-  opacity: .6;
+  opacity: .7;
 }
 
 .todo .form-check {
@@ -23,5 +23,12 @@
   right: 1rem;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
+}
+
+.loading {
+  background-image: url(/fonts/ajax-spinner.svg?9729c21273bda5362e1980e6fc4f1bdf);
+  background-repeat: no-repeat;
+  background-position: right .70rem center;
+  opacity: .7;
 }
 

@@ -6,18 +6,21 @@
             </p>
         </div>
         <div class="col-12" v-for="(todo, i) in todos" :key="i">
-            <div class="todo card mb-2" :class="{ 'completed' : todo.completed === 1 }">
+            <div class="todo card mb-2"
+                :class="{ 'completed' : todo.completed === 1, 'loading' : todo.loading }">
                 <div class="card-body pl-5 pr-5">
                     <input type="checkbox" class="form-check form-check-inline"
                            :checked="todo.completed === 1"
                            :value="todo.id"
-                           @click="$emit('onUpdate', todo.id)">
+                           @click="$emit('onUpdate', todo.id)"
+                           v-if="todo.id">
                     <span>{{ todo.todo }}</span>
                     <button type="button"
                             class="close"
                             data-dismiss="alert"
                             aria-label="Close"
-                            @click="$emit('onDelete', todo.id)">
+                            @click="$emit('onDelete', todo.id)"
+                            v-if="todo.id && !todo.loading">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

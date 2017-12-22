@@ -7,7 +7,7 @@ body {
 .todo.completed {
     border-color: #eee;
     text-decoration: line-through;
-    opacity:.6;
+    opacity:.7;
 }
 .todo .form-check {
     position: absolute;
@@ -20,4 +20,10 @@ body {
     top: 50%;
     right: 1rem;
     transform: translateY(-50%);
+}
+.loading {
+    background-image: url('../img/ajax-spinner.svg');
+    background-repeat: no-repeat;
+    background-position: right .70rem center;
+    opacity:.7;
 }
