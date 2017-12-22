@@ -43217,7 +43217,7 @@ var render = function() {
                 _c("input", {
                   staticClass: "form-check form-check-inline",
                   attrs: { type: "checkbox" },
-                  domProps: { checked: todo.completed, value: todo.id },
+                  domProps: { checked: todo.completed == 1, value: todo.id },
                   on: {
                     click: function($event) {
                       _vm.$emit("onUpdate", todo.id)
