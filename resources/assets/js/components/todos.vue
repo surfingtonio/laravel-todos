@@ -6,10 +6,10 @@
             </p>
         </div>
         <div class="col-12" v-for="(todo, i) in todos" :key="i">
-            <div class="todo card mb-2" :class="{ 'completed' : todo.completed == 1 }">
+            <div class="todo card mb-2" :class="{ 'completed' : todo.completed === 1 }">
                 <div class="card-body pl-5 pr-5">
                     <input type="checkbox" class="form-check form-check-inline"
-                           :checked="todo.completed == 1"
+                           :checked="todo.completed === 1"
                            :value="todo.id"
                            @click="$emit('onUpdate', todo.id)">
                     <span>{{ todo.todo }}</span>

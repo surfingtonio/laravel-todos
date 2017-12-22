@@ -42917,9 +42917,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
             var i = this.todos.findIndex(function (obj) {
                 return obj.id === id;
             });
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.put('/api/todos/' + id, _extends({}, this.todos[i], { completed: !this.todos[i].completed })).then(function (res) {
-                _this2.todos[i].completed = !_this2.todos[i].completed;
-            }).catch(function (error) {
+            var c = this.todos[i].completed;
+
+            this.todos[i].completed = c === 1 ? 0 : 1;
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.put('/api/todos/' + id, _extends({}, this.todos[i], { completed: c === 1 ? 0 : 1 })).catch(function (error) {
+                _this2.todos[i].completed = c;
                 console.log('There was an error updating id: ' + id);
             });
         },
@@ -42928,20 +42930,26 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
             var res = confirm('Are you sure you want to permanently delete?');
             if (res) {
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/todos/' + id).then(function (res) {
-                    var i = _this3.todos.findIndex(function (obj) {
-                        return obj.id === id;
-                    });
-                    _this3.todos.splice(i, 1);
+                var i = this.todos.findIndex(function (obj) {
+                    return obj.id === id;
+                });
+                var c = this.todos[i];
+
+                this.todos.splice(i, 1);
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/todos/' + id).catch(function (error) {
+                    _this3.todos.splice(i, 0, c);
+                    console.log('There was an error deleting id: ' + id);
                 });
             }
         },
         handleSubmit: function handleSubmit(data) {
             var _this4 = this;
 
+            this.todos.unshift(data);
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/todos/', data).then(function (res) {
-                _this4.todos.unshift(res.data);
+                _this4.todos[0].id = res.data.id;
             }).catch(function (error) {
+                _this4.todos.splice(0, 1);
                 console.log('There was an error inserting new todo');
             });
         }
@@ -43210,14 +43218,14 @@ var render = function() {
             "div",
             {
               staticClass: "todo card mb-2",
-              class: { completed: todo.completed == 1 }
+              class: { completed: todo.completed === 1 }
             },
             [
               _c("div", { staticClass: "card-body pl-5 pr-5" }, [
                 _c("input", {
                   staticClass: "form-check form-check-inline",
                   attrs: { type: "checkbox" },
-                  domProps: { checked: todo.completed == 1, value: todo.id },
+                  domProps: { checked: todo.completed === 1, value: todo.id },
                   on: {
                     click: function($event) {
                       _vm.$emit("onUpdate", todo.id)
